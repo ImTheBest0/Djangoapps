@@ -1,0 +1,28 @@
+{%extends "tdlist/layout.html"%}
+{%block body%}
+<div class="card">
+    <h5 class="card-header">{{task.name}}</h5>
+    <div class="card-body">
+      
+      <p class="card-text">{{task.description}}</p>
+      <p class="card-text">{{task.deadline}}</p>
+
+      <form action="{%url 'delete' task.id%}" method="post">
+        {%csrf_token%}
+      <button type="submit" class="btn btn-danger">Delete</a>
+    </form>
+    
+  {%if not task.status%}
+  <form action="{%url 'validate' task.id%}" method="post">
+    {%csrf_token%}
+  <button type="submit" class="btn btn-success">Finished</a>
+  {%else%}
+  <p class="card-text" >Finished</h3>
+  {%endif%}
+</form>
+    
+      
+    </div>
+  </div>
+
+{%endblock%}

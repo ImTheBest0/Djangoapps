@@ -1,0 +1,73 @@
+{%extends "taskapp/layout.html"%}
+{%block body%}
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="#">Mr {{request.user.username}}</a>
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Tasks To-Do</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" href="{%url 'taskapp:wmanagers'%">Managers</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Messages</a>
+        </li>
+        
+        <li class="nav-item">
+          <a class="nav-link" href="{%url 'taskapp:logout'%}">Logout</a>
+        </li>
+      </ul>
+      <form class="d-flex" role="search">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+    </div>
+  </div>
+</nav>
+
+  
+  {%if worker.tasks_set.all%}
+  <div class="container">
+    <div class="row">
+
+  {%for task in worker.tasks_set.all%}
+  <div class="col-12">
+  <div class="card" >
+    <div class="card-body bg-light">
+
+        <h5 class="card-title">{{ task.name }} <span class="text-success">
+            Assigned at: {{ task.date_assigned}} </span></h5>
+            
+            {%if task.completness and task.confirmation%}
+      <p class="card-text">COMPLETED and CONFIRMED<span class="text-success"> {{task.confirmation_date}}</span></p>
+      
+          {%elif task.completness and not task.confirmation%}
+          <p class="card-text">COMPLETED at <span class="text-info"> {{task.completion_date}}</span> </p>
+          <p class="card-text text-warning">Checking required</p>
+          {%else%}
+          <p class="card-text">NOT COMPLETED</p>
+          <p class="card-text">Deadline at: <span class="text-danger"> {{task.deadline}}</span></p>
+          
+          {%endif%}
+          <a href="{%url 'taskapp:taskdetailw' task.id%}" class="btn btn-primary"  type="submit"> {% if not task.completness %}Do it{% else %}Status{% endif %} </a>
+
+        </div>
+    </div>
+</div>
+  {%endfor%}
+    
+</div>
+</div>
+</div>
+    {%else%}
+
+  <h1>NO TASKS </h1>
+
+  {%endif%}
+  {%endblock%}
+

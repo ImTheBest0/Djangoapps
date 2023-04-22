@@ -1,0 +1,122 @@
+{%extends "taskapp/layout.html"%}
+{%block body%}
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="#">Manager {{request.user.username}}</a>
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="{%url 'taskapp:index'%}">Tasks in supervision</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{%url 'taskapp:assign'%}">Assign</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Messages</a>
+        </li>
+        
+        <li class="nav-item">
+          <a class="nav-link" href="{%url 'taskapp:logout'%}">Logout</a>
+        </li>
+      </ul>
+      <form class="d-flex" role="search">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+    </div>
+  </div>
+</nav>
+
+<div class="form-group">
+  <form method="POST" enctype="multipart/form-data">
+    {%csrf_token%}
+    {{form.as_p}}
+    <button class="btn btn-secondary">Submit</button>
+  </form>
+</div>
+    
+  <ul class="list-group">
+    <li class="list-group-item text-bg-info col-5 text-dark">Title: {{task.name}}</li>
+    <li class="list-group-item text-bg-info col-5 text-dark">Deadline: {{task.deadline}}</li>
+    {%if task.completness%}
+    <li class="list-group-item text-bg-info col-5 text-dark"> Finished at {{task.completion_date}}</li>
+    {%else%}
+    <li class="list-group-item text-success col-5 text-dark"> Not Completed</li>
+    {%endif%}
+    <li class="list-group-item text-bg-info col-5 text-dark">Verified: {{task.confirmation}}</li>
+  </ul>
+
+ 
+
+  <div class="accordion mt-3" id="accordionPanelsStayOpenExample">
+    <div class="accordion-item col-5">
+      <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+          Task Description
+        </button>
+
+      </h2>
+      <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
+        <div class="accordion-body">{{task.description}} </div>
+
+      </div>
+    </div>
+    <div class="accordion-item col-5">
+        <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+          Task instructions
+        </button>
+      </h2>
+      <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+        <div class="accordion-body">{%for instruction in task.instructions.all%}
+            <a href="{{instruction.file.url}}"> {{instruction.file.name}}</a>
+            {%endfor%} </div>
+      </div>
+    </div>
+  </div>
+
+  {%if task.completness%}
+
+  <div class="accordion mt-3" id="accordionPanelsStayOpen">
+    <div class="accordion-item col-5">
+      <h2 class="accordion-header" id="panelsStayOpen-headingOn">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOn" aria-expanded="false" aria-controls="panelsStayOpen-collapseOn">
+          Task Report by workers
+        </button>
+
+      </h2>
+      <div id="panelsStayOpen-collapseOn" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOn">
+        <div class="accordion-body">{{task.detailsres}} </div>
+
+      </div>
+    </div>
+    <div class="accordion-item col-5">
+        <h2 class="accordion-header" id="panelsStayOpen-headingTw">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTw" aria-expanded="false" aria-controls="panelsStayOpen-collapseTw">
+          Completness files
+        </button>
+      </h2>
+      <div id="panelsStayOpen-collapseTw" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTw">
+        <div class="accordion-body">{%for resolutiondoc in task.resolutiondocs.all%}
+            <a href="{{resolutiondoc.file.url}}"> {{resolutiondoc.file.name}}</a>
+            {%endfor%} </div>
+      </div>
+    </div>
+  </div>
+  {%endif%}
+  
+  {%if task.completness and not task.confirmation%}
+  <a href="{%url 'taskapp:confirm' task.id%}" class="btn btn-primary"  type="submit"> Confirm</a>
+  {%endif%}
+
+
+  <a href="{%url 'taskapp:delete' task.id%}" class="btn btn-primary"  type="submit">Delete</a>
+
+
+
+
+
+  {%endblock%}
